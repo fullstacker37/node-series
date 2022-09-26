@@ -1,6 +1,5 @@
 const http = require('http')
-const fs = require('fs')
-const url = require('url')
+const router = require('./router')
 
 const server = http.createServer()
 server.listen(8080, () => {
@@ -13,26 +12,5 @@ server.on('request', (req, res) => {
   // res.setHeader('Content-type', 'text/html;charset=utf-8')
   // res.write('你好')
   // res.end()
-  if (req.method === 'GET') {
-    console.log(url.parse(req.url, true).query.id)
-    if(req.url === '/') {
-      fs.readFile('./index.html', 'utf-8', (err, data) => {
-        res.write(data)
-        res.end()
-      })
-    } else {
-      fs.readFile('./motuo.png', (err, data) => {
-        res.end(data)
-      })
-    }
-  } else if (req.method === 'POST') {
-    // 参数在请求体中
-    let data
-    req.on('data', (d) => {
-      data += d
-    })
-    req.on('end', () => {
-      res.end(require('querystring').parse(data))
-    })
-  }
+  router(req, res)
 })
